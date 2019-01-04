@@ -23,9 +23,19 @@ class Subscriptions extends Component {
        }).then(res => res.json())
        .then(() => {
            this.setState({
-               email:''
+               email:'',
+               success: true
            })
        })
+    }
+
+    clearMessage = () => {
+        setTimeout(function(){
+            this.setState({
+                error: false,
+                success: false
+            })
+        }.bind(this), 3000);
     }
 
     handleSubmit = event => {
@@ -36,8 +46,9 @@ class Subscriptions extends Component {
         if(regex.test(email)){
             this.saveSubscription(email);
         }else{
-            ///
+            this.setState({error:true})
         }
+        this.clearMessage();
     }
 
     onChangeInput = event => {
@@ -58,6 +69,8 @@ class Subscriptions extends Component {
                         value={this.state.email}
                         onChange={this.onChangeInput}
                         />
+                        <div className={this.state.error ? 'error show': 'error'}>Check your email</div>
+                        <div className={this.state.success ? 'success show':'success'}>Thank You</div>
                     </form>
                 </div>
                 <small>
