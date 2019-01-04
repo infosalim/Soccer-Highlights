@@ -31,7 +31,6 @@ const generateSlides = ({slides}) => {
 }
 
 const Featured = (props) => {
-  console.log(props);
   return (
     <div>
       {generateSlides(props)}
