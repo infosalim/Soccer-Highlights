@@ -4,31 +4,53 @@ import React, { Component } from 'react';
 const URL_Home = 'http://localhost:3004/teams';
 
 class Poll extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
-            pollTeams: ''
+            pollTeams: []
         }
     }
 
-    fetchPoll(){
-        fetch(`${URL_Home}?poll=true&_sort=count&_order=desc`, {method: 'GET'})
-        .then(response => response.json())
-        .then(json => {
-            console.log(json);
-            this.setState({
-                pollTeams: json
+    fetchPoll() {
+        fetch(`${URL_Home}?poll=true&_sort=count&_order=desc`, { method: 'GET' })
+            .then(response => response.json())
+            .then(json => {
+                this.setState({
+                    pollTeams: json
+                })
             })
-        })
     }
 
 
-    componentDidMount(){
+    componentDidMount() {
         this.fetchPoll();
     }
 
-    renderPoll(){
+    addCount(count, id){
+        fetch(`${URL_Home}/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Accept': 'application/json',
+                'Content-type':'application/json'   
+            },
+            body: JSON.stringify({count: count + 1})
+        })
+        .then(() => {
+            this.fetchPoll();
+        })
+    }
 
+    renderPoll() {
+        const position = ['1ST', '2ND', '3RD'];
+        return this.state.pollTeams.map((item, index)=> {
+            return (
+                <div key={item.id} className="poll-item" onClick={() => this.addCount(item.count, item.id)}>
+                    <img src={`/images/teams/${item.logo}`} alt={item.name} />
+                    <h4>{position[index]}</h4>
+                    <div>{item.count} Votes</div>
+                </div>
+            )
+        })
     }
 
 
