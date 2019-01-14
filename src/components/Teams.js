@@ -16,33 +16,50 @@ const fadeAnimation = {
 }
 
 class Teams extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             teams: [],
             filtered: [],
-            kewords: ''
+            keywords: ''
         }
     }
 
-    componentDidMount(){
-        fetch(URL_TEAMS, {method: 'GET'})
-        .then(response => response.json())
-        .then(json => {
-            this.setState({
-                teams: json,
-                filtered: json
+    componentDidMount() {
+        fetch(URL_TEAMS, { method: 'GET' })
+            .then(response => response.json())
+            .then(json => {
+                this.setState({
+                    teams: json,
+                    filtered: json
+                })
             })
-        })
     }
 
+    searchTeam = event => {
+        const keyword = event.target.value;
+        if(keyword !==''){
+            const list = this.state.teams.filter(item => {
+                return item.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1;
+            });
 
-    renderList = ({filtered}) => {
+            this.setState({
+                filtered: list,
+                keyword
+            })
+        }else{
+            this.setState({
+                filtered: this.state.teams,
+                keyword
+            })
+        }
+    }
+    renderList = ({ filtered }) => {
         return filtered.map(item => {
-            return(
+            return (
                 <Link to={`/team/${item.name}`} key={item.id} className='team-item'>
-                    <img src={`/images/teams/${item.logo}`} 
-                    alt={`${item.name}`}/>
+                    <img src={`/images/teams/${item.logo}`}
+                        alt={`${item.name}`} />
                 </Link>
             )
         })
@@ -53,9 +70,11 @@ class Teams extends Component {
         return (
             <div className='teams-component'>
                 <div className="teams-input">
-                    <input 
-                    type="text"
-                    placeholder="Search for a Team"
+                    <input
+                        value={this.state.kewords}
+                        type="text"
+                        placeholder="Search for a Team"
+                        onChange={e => this.searchTeam(e)}
                     />
                 </div>
                 <div className="teams-container">
